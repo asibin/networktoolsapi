@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <h1>What is my ip?</h1>
+    <div class="jumbotron">
+        <table class="table">
+        <thead>
+            <tr>
+                <th><strong><h2>IP:</h2></strong></th>
+                <th><strong><h2>{{ ip }}</h2></strong></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if isp %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>ISP:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ isp }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        {% if geoip.city %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>City:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ geoip.city }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        {% if geoip.country_name or geoip.country_code %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>Country:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ geoip.country_name }} {{ geoip.country_code }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        {% if geoip.time_zone %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>Timezone:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ geoip.time_zone }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        {% if whois_info.asn %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>ASN:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ whois_info.asn }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        {% if whois_info.asn_cidr %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>ASN CIDR:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ whois_info.asn_cidr }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        {% if error %}
+        <tr>
+            <td>
+                <div><p class="lead"><strong>Whois:</strong></p></div>
+            </td>
+            <td>
+                <div><p class="lead">{{ error }}</p></div>
+            </td>
+        </tr>
+        {% endif %}
+        </tbody>
+        </table>
+    </div>
+{% endblock %}
