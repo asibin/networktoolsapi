@@ -12,7 +12,7 @@ Access is protected by an IP allow list. If you need to grant access to new IP g
 
 All endpoints can be rate limited by specifying number of requests in ``settings.py``.
 
-Ratelimiting is also supported. Define ratelimiting in settings.py. ACL is supported through whitelist.
+Ratelimiting is also supported. Define ratelimiting in settings.py. ACL is supported through whitelist in settings.py.
 
 
 -----------------
