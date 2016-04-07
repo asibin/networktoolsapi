@@ -12,6 +12,8 @@ Access is protected by an IP allow list. If you need to grant access to new IP g
 
 All endpoints can be rate limited by specifying number of requests in ``settings.py``.
 
+Ratelimiting is also supported.
+
 
 -----------------
 API Documentation
