@@ -14,7 +14,7 @@ class TestNetworkToolsAPI(unittest.TestCase):
         self.assertEqual(rv, ['93.184.216.34', '2606:2800:220:1:248:1893:25c8:1946'])
 
     def test_geoip_public_domain(self):
-        rv = self.app.get('/api/geoip/example.com')
+        rv = self.app.get('/api/geoip/example.com', environ_base={'REMOTE_ADDR': '93.184.216.34'})
         resp = json.loads(rv.data)
         self.assertEqual(rv.status_code, 200)
         self.assertIn('geoip', resp)
@@ -24,10 +24,21 @@ class TestNetworkToolsAPI(unittest.TestCase):
         self.assertIn('ip', resp['geoip'][0])
         self.assertIn('latitude', resp['geoip'][0])
         self.assertIn('longitude', resp['geoip'][0])
+        self.assertIn('distance', resp['geoip'][0])
+        self.assertIn('distance_unit', resp['geoip'][0])
+        self.assertIsInstance(resp['resolved_ips'], list)
+
+    def test_geoip_public_domain_imperial(self):
+        rv = self.app.get('/api/geoip/example.com?imperial', environ_base={'REMOTE_ADDR': '93.184.216.34'})
+        resp = json.loads(rv.data)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('distance', resp['geoip'][0])
+        self.assertIn('distance_unit', resp['geoip'][0])
+        self.assertEqual('mi', resp['geoip'][0]['distance_unit'])
         self.assertIsInstance(resp['resolved_ips'], list)
 
     def test_geoip_public_ip(self):
-        rv = self.app.get('/api/geoip/8.8.8.8')
+        rv = self.app.get('/api/geoip/8.8.8.8', environ_base={'REMOTE_ADDR': '93.184.216.34'})
         resp = json.loads(rv.data)
         self.assertEqual(rv.status_code, 200)
         self.assertIn('geoip', resp)
@@ -37,6 +48,17 @@ class TestNetworkToolsAPI(unittest.TestCase):
         self.assertIn('ip', resp['geoip'][0])
         self.assertIn('latitude', resp['geoip'][0])
         self.assertIn('longitude', resp['geoip'][0])
+        self.assertIn('distance', resp['geoip'][0])
+        self.assertIn('distance_unit', resp['geoip'][0])
+        self.assertIsInstance(resp['resolved_ips'], list)
+
+    def test_geoip_public_ip_imperial(self):
+        rv = self.app.get('/api/geoip/8.8.8.8?imperial', environ_base={'REMOTE_ADDR': '93.184.216.34'})
+        resp = json.loads(rv.data)
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('distance', resp['geoip'][0])
+        self.assertIn('distance_unit', resp['geoip'][0])
+        self.assertEqual('mi', resp['geoip'][0]['distance_unit'])
         self.assertIsInstance(resp['resolved_ips'], list)
 
     def test_geoip_private_ip(self):

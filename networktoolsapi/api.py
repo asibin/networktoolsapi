@@ -3,6 +3,7 @@ import socket
 import logging
 import nmap
 import pygeoip
+import math
 
 from pythonwhois import get_whois
 from pythonwhois.shared import WhoisException
@@ -100,6 +101,37 @@ def error_response(msg, rc):
                     'msg': str(msg)}), rc
 
 
+def geoip_distance(lat1, long1, lat2, long2, metric=True):
+    """
+    Calculates distance between two points on spherical earth.
+
+    Source: http://www.johndcook.com/blog/python_longitude_latitude/
+
+    :param lat1: Latitude of the first point
+    :param long1: Longitude of the second point
+    :param lat2: Latitude of the second point
+    :param long2: Longitude of the second point
+    :param metric: if true returns km, else returns miles
+    :return: Distance in km
+    """
+
+    degrees_to_radians = math.pi / 180.0
+
+    phi1 = (90.0 - lat1) * degrees_to_radians
+    phi2 = (90.0 - lat2) * degrees_to_radians
+
+    theta1 = long1 * degrees_to_radians
+    theta2 = long2 * degrees_to_radians
+
+    cos = (math.sin(phi1) * math.sin(phi2) * math.cos(theta1 - theta2) + math.cos(phi1) * math.cos(phi2))
+    arc = math.acos(cos)
+
+    if metric:
+        return arc * 6371, "km"
+    else:
+        return arc * 3959, "mi"
+
+
 @app.route('/')
 def return_whatismyip():
     """
@@ -139,7 +171,9 @@ def return_ip():
 @app.route('/api/geoip/<string:query>', methods=['GET'])
 def return_geoip(query):
     """
-    Geoip query, accepts IP or FQDN. FQDN is resolved to ip and then queried for geoip data:
+    Geoip query, accepts IP or FQDN. FQDN is resolved to ip and then queried for geoip data.
+    Google maps url in response for quick access. Distance available in metric and imperial measurements.
+    Defaults to metric. Add ``?imperial`` to get distance in miles.
 
     :param query: IP or FQDN
 
@@ -158,6 +192,8 @@ def return_geoip(query):
                     "country_code": "US",
                     "country_code3": "USA",
                     "country_name": "United States",
+                    "distance": 830
+                    "distance_unit": "km"
                     "dma_code": 807,
                     "google_maps_url": "http://maps.google.com/maps?q=loc:37.386,-122.0838",
                     "ip": "8.8.8.8",
@@ -179,6 +215,16 @@ def return_geoip(query):
 
     resolved_ip = hostname_resolves(query)
 
+    visitor_ip = request.remote_addr
+    visitor_geoip = CITY_MMDB.record_by_addr(visitor_ip)
+
+    args = request.args.get('imperial')
+
+    if args is not None:
+        metric = False
+    else:
+        metric = True
+
     for ip in resolved_ip:
         logger.debug(ip)
         geoip = CITY_MMDB.record_by_addr(ip)
@@ -189,6 +235,15 @@ def return_geoip(query):
 
         geoip['google_maps_url'] = "http://maps.google.com/maps?q=loc:{},{}".format(geoip['latitude'],
                                                                                     geoip['longitude'])
+
+        if visitor_geoip is not None:
+            distance, unit = geoip_distance(visitor_geoip['latitude'], visitor_geoip['longitude'],
+                                               geoip['latitude'], geoip['longitude'], metric=metric)
+            geoip['distance'] = distance
+            geoip['distance_unit'] = unit
+        else:
+            geoip['distance'] = None
+            geoip['distance_unit'] = None
 
         hosts.append(geoip)
 
