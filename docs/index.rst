@@ -31,4 +31,3 @@ Indices and tables
    :maxdepth: 2
 
    source
-   changelog
