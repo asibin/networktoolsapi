@@ -5,4 +5,5 @@ RUN apt-get install -y python-pip python-dev build-essential
 COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
-CMD ["python runserver.py"]
+ENTRYPOINT ["python"]
+CMD ["runserver.py"]
