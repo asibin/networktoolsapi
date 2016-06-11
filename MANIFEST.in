@@ -1,0 +1,2 @@
+recursive-include networktoolsapi/templates *
+recursive-include networktoolsapi/static *
