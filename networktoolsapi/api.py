@@ -19,6 +19,14 @@ from networktoolsapi import errors
 
 logging.basicConfig(level=app.config['LOG_LEVEL'], format="[%(asctime)s][%(levelname)s] - %(message)s")
 logger = logging.getLogger(__name__)
+logger.info("""
+  _   _      _                      _    _____           _          _    ____ ___
+ | \ | | ___| |___      _____  _ __| | _|_   _|__   ___ | |___     / \  |  _ \_ _|
+ |  \| |/ _ \ __\ \ /\ / / _ \| '__| |/ / | |/ _ \ / _ \| / __|   / _ \ | |_) | |
+ | |\  |  __/ |_ \ V  V / (_) | |  |   <  | | (_) | (_) | \__ \  / ___ \|  __/| |
+ |_| \_|\___|\__| \_/\_/ \___/|_|  |_|\_\ |_|\___/ \___/|_|___/ /_/   \_\_|  |___|
+
+""")
 
 ALLOWED_IPS = app.config['ALLOWED_IPS']
 
