@@ -10,7 +10,12 @@ Flask based API for getting JSON information on:
 * ipcalc: calculates IP subnets based on netmask, also returns basic IP data, can print all IPs in range with `?iplist`
 
 **Disclaimer:** standard nmap limitations apply here! This is a service on public IP it **can not** access local networks behind firewalls.
- 
+
+In order to have geoip available you need to download Maxmind's databases and put them into `networktoolsapi/static/data` folder as `GeoIPCity.dat` and `GeoIPISP.dat`.
+Please note that GeoIP ISP database is not free and is part of the MaxMind's paid tier, however if you don't want to use paid tier you can use `GeoLite ASN` 
+database to get at least ASN number of the ISP. There are a few different ways to get ISP name from ASN, if you want to add this functionality submit a pull request.
+Change filename in `settings.py` under `ISP_MMDB_LOCATION` to use different database. This project defaults to free databases but is easily used with paid ones.
+
 Just install requirements from requirements file:
 
 ```bash
@@ -18,9 +23,6 @@ pip install -r requirements.txt
 ```
 
 and run `runserver.py` for local development (port 5000).
-
-In order to have geoip available you need to download Maxmind's databases and put them into networktoolsapi/static/data folder as `GeoIPCity.dat` and `GeoIPISP.dat`:
-
 
 ## Documentation
 
