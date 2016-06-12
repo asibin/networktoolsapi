@@ -53,7 +53,7 @@ def acl():
         abort(403)
     elif len(ALLOWED_IPS) == 0:
         logger.debug("No IPs defined in whitelist")
-        logger.info("Allowing access to: {}".format(request.remote_addr))
+        logger.debug("Allowing access to: {}".format(request.remote_addr))
         return
 
 
