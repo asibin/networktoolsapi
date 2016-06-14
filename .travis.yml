@@ -1,10 +1,16 @@
+sudo: required
+
 language: python
 
 python:
-  - "2.6"
-  - "2.7"
+  - 2.6
+  - 2.7
 
-install:
-  - python setup.py install
+services:
+  - docker
 
-script: python tests/tests.py
+before_install:
+  - docker build -t asibin/networktoolsapi .
+  - docker run asibin/networktoolsapi
+script:
+  - python tests/tests.py
