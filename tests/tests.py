@@ -1,3 +1,6 @@
+import sys
+print sys.path
+
 import unittest
 import networktoolsapi
 import json

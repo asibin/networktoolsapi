@@ -11,6 +11,5 @@ services:
 
 before_install:
   - docker build -t asibin/networktoolsapi .
-  - docker run asibin/networktoolsapi
 script:
-  - python tests/tests.py
+  - docker run asibin/networktoolsapi /bin/sh -c 'PATH=$PATH:`pwd` && python tests/tests.py'
