@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/asibin/networktoolsapi.svg?branch=master)](https://travis-ci.org/asibin/networktoolsapi)
+
+
 # NETWORK TOOLS API
 
 Flask based API for getting JSON information on:
