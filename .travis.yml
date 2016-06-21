@@ -12,4 +12,4 @@ services:
 before_install:
   - docker build -t asibin/networktoolsapi .
 script:
-  - docker run asibin/networktoolsapi /bin/sh -c python tests/tests.py'
+  - docker run asibin/networktoolsapi /bin/sh -c 'python tests/tests.py'
