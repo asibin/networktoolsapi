@@ -9,7 +9,7 @@ MAINTAINER  Sibin Arsenijevic "sibin.arsenijevic@gmail.com"
 
 # Install essentials
 RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential git wget
+RUN apt-get install -y python-pip python-dev build-essential git wget nmap
 
 # Clone the latest version of project
 RUN git clone 'https://github.com/asibin/networktoolsapi.git'
@@ -20,11 +20,12 @@ RUN wget -q 'http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.
 RUN gunzip -c GeoIPASNum.dat.gz > /networktoolsapi/networktools/static/data/GeoIPASNum.dat
 RUN gunzip -c GeoLiteCity.dat.gz > /networktoolsapi/networktools/static/data/GeoLiteCity.dat
 
+ENV PYTHONPATH /networktoolsapi
+
 WORKDIR /networktoolsapi
 
 # Install the requirements
 RUN pip install -r requirements.txt
 
 # Start project
-#CMD ["python", "runserver.py"]
-CMD ["python", "tests/tests.py"]
+CMD ["python", "runserver.py"]
