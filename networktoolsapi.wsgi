@@ -11,4 +11,4 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__name__), 'networktoolsapi'))
 
 # Import the actual app
-from networktoolsapi import app as application
+from networktools import app as application

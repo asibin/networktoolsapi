@@ -17,8 +17,8 @@ RUN git clone 'https://github.com/asibin/networktoolsapi.git'
 # Setup free MaxMind databases
 RUN wget -q 'http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz'
 RUN wget -q 'http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz'
-RUN gunzip -c GeoIPASNum.dat.gz > /networktoolsapi/networktoolsapi/static/data/GeoIPASNum.dat
-RUN gunzip -c GeoLiteCity.dat.gz > /networktoolsapi/networktoolsapi/static/data/GeoLiteCity.dat
+RUN gunzip -c GeoIPASNum.dat.gz > /networktoolsapi/networktools/static/data/GeoIPASNum.dat
+RUN gunzip -c GeoLiteCity.dat.gz > /networktoolsapi/networktools/static/data/GeoLiteCity.dat
 
 WORKDIR /networktoolsapi
 
@@ -26,4 +26,5 @@ WORKDIR /networktoolsapi
 RUN pip install -r requirements.txt
 
 # Start project
-CMD ["python", "runserver.py"]
+#CMD ["python", "runserver.py"]
+CMD ["python", "tests/tests.py"]

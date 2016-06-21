@@ -14,8 +14,8 @@ from netaddr import IPNetwork, AddrFormatError, AddrConversionError
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from networktoolsapi import app
-from networktoolsapi import errors
+from networktools import app
+from networktools import errors
 
 logging.basicConfig(level=app.config['LOG_LEVEL'], format="[%(asctime)s][%(levelname)s] - %(message)s")
 logger = logging.getLogger(__name__)

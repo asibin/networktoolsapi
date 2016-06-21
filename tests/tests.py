@@ -1,19 +1,16 @@
-import sys
-print sys.path
-
 import unittest
-import networktoolsapi
 import json
+import networktools
 
 
 class TestNetworkToolsAPI(unittest.TestCase):
 
     def setUp(self):
-        networktoolsapi.app.config['TESTING'] = True
-        self.app = networktoolsapi.app.test_client()
+        networktools.app.config['TESTING'] = True
+        self.app = networktools.app.test_client()
 
     def test_resolver(self):
-        rv = networktoolsapi.api.hostname_resolves('example.com')
+        rv = networktools.api.hostname_resolves('example.com')
         self.assertEqual(rv, ['93.184.216.34', '2606:2800:220:1:248:1893:25c8:1946'])
 
     def test_geoip_public_domain(self):
@@ -333,7 +330,6 @@ class TestNetworkToolsAPI(unittest.TestCase):
         resp = json.loads(rv.data)
         self.assertEqual(resp['status'], 'error')
         self.assertEqual(rv.status_code, 400)
-
 
     # ipcalc
     def test_ipcalc_public_domain(self):
