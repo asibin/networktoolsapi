@@ -1,3 +1,7 @@
+"""
+Main API functionality
+"""
+
 import sys
 import socket
 import logging
@@ -19,7 +23,7 @@ from networktools import errors
 
 logging.basicConfig(level=app.config['LOG_LEVEL'], format="[%(asctime)s][%(levelname)s] - %(message)s")
 logger = logging.getLogger(__name__)
-logger.info("""
+logger.info(r"""
   _   _      _                      _    _____           _          _    ____ ___
  | \ | | ___| |___      _____  _ __| | _|_   _|__   ___ | |___     / \  |  _ \_ _|
  |  \| |/ _ \ __\ \ /\ / / _ \| '__| |/ / | |/ _ \ / _ \| / __|   / _ \ | |_) | |
@@ -34,7 +38,7 @@ try:
     CITY_MMDB = pygeoip.GeoIP(app.config['CITY_MMDB_LOCATION'])
     ISP_MMDB = pygeoip.GeoIP(app.config['ISP_MMDB_LOCATION'])
 except IOError as e:
-    logger.critical("Cannot open GEOIP database: {}".format(str(e)))
+    logger.critical("Cannot open GEOIP database: %s", str(e))
     sys.exit(1)
 
 limiter = Limiter(app,
@@ -49,18 +53,18 @@ def acl():
     Leave empty list in case you don't want to use IP restrictions
     """
     if request.remote_addr not in ALLOWED_IPS and len(ALLOWED_IPS) > 0:
-        logger.debug("IP not in list of allowed IPs: {}".format(request.remote_addr))
+        logger.debug("IP not in list of allowed IPs: %s", request.remote_addr)
         abort(403)
     elif len(ALLOWED_IPS) == 0:
         logger.debug("No IPs defined in whitelist")
-        logger.debug("Allowing access to: {}".format(request.remote_addr))
+        logger.debug("Allowing access to: %s", request.remote_addr)
         return
 
 
 def hostname_resolves(hostname):
     resolved_ips = []
 
-    logger.debug("Hostname to resolve: {}".format(str(hostname)))
+    logger.debug("Hostname to resolve: %s", str(hostname))
 
     try:
         ips = socket.getaddrinfo(hostname, None)
@@ -68,20 +72,20 @@ def hostname_resolves(hostname):
             if ip[4][0] not in resolved_ips:
                 net = IPNetwork(ip[4][0])
                 if net.is_private() or net.is_link_local():
-                    logger.warning("Tried to resolve local IP: {}, ignoring!".format(ip[4][0]))
+                    logger.warning("Tried to resolve local IP: %s, ignoring!", ip[4][0])
                     continue
                 else:
                     resolved_ips.append(ip[4][0])
 
         if len(resolved_ips) > 0:
-            logger.debug("Resolved IPs: {}".format(', '.join(resolved_ips)))
+            logger.debug("Resolved IPs: %s", ', '.join(resolved_ips))
             return resolved_ips
         else:
-            logger.warning("No IPs resolved from query: {}".format(hostname))
+            logger.warning("No IPs resolved from query: %s", hostname)
             abort(400)
 
     except socket.gaierror:
-        logger.debug("Failed to resolve IP address from: {}".format(hostname))
+        logger.debug("Failed to resolve IP address from: %s", hostname)
         abort(400)
 
 
@@ -246,7 +250,7 @@ def return_geoip(query):
 
         if visitor_geoip is not None:
             distance, unit = geoip_distance(visitor_geoip['latitude'], visitor_geoip['longitude'],
-                                               geoip['latitude'], geoip['longitude'], metric=metric)
+                                            geoip['latitude'], geoip['longitude'], metric=metric)
             geoip['distance'] = distance
             geoip['distance_unit'] = unit
         else:

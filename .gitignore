@@ -89,3 +89,4 @@ ENV/
 
 # Geoip databases
 *.dat
+.DS_Store
