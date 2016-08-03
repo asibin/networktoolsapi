@@ -109,6 +109,12 @@ def get_ipwhois(ip):
 
 
 def error_response(msg, rc):
+    """
+    Returns properly formatted error api response
+    :param msg: Human readable error message
+    :param rc: HTTP return code
+    :return: JSON formatted error response
+    """
     return jsonify({'status': 'error',
                     'msg': str(msg)}), rc
 
