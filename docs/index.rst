@@ -19,7 +19,7 @@ Ratelimiting is also supported. Define ratelimiting in settings.py. ACL is suppo
 API Documentation
 -----------------
 
-.. autoflask:: networktoolsapi:app
+.. autoflask:: networktools:app
    :undoc-static:
 
 Indices and tables

@@ -1,5 +1,5 @@
 Source Documentation
 ====================
 
-.. automodule:: networktoolsapi.api
+.. automodule:: networktools.api
    :members:
