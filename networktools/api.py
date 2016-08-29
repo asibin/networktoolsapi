@@ -39,7 +39,6 @@ try:
     ISP_MMDB = pygeoip.GeoIP(app.config['ISP_MMDB_LOCATION'])
 except IOError as e:
     logger.critical("Cannot open GEOIP database: %s", str(e))
-    sys.exit(1)
 
 limiter = Limiter(app,
                   key_func=get_remote_address,
