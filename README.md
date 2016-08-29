@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/asibin/networktoolsapi.svg?branch=master)](https://travis-ci.org/asibin/networktoolsapi)
-
-
+[![Documentation Status](https://readthedocs.org/projects/networktoolsapi/badge/?version=latest)](http://networktoolsapi.readthedocs.io/en/latest/?badge=latest)
 # NETWORK TOOLS API
 
 Flask based API for getting JSON information on:
@@ -19,7 +18,7 @@ Please note that GeoIP ISP database is not free and is part of the MaxMind's pai
 database to get at least ASN number of the ISP. There are a few different ways to get ISP name from ASN, if you want to add this functionality submit a pull request.
 Change filename in `settings.py` under `ISP_MMDB_LOCATION` to use different database. This project defaults to free databases but is easily used with paid ones.
 
-Just install requirements from requirements file:
+Install requirements from requirements file:
 
 ```bash
 pip install -r requirements.txt
@@ -29,9 +28,13 @@ and run `runserver.py` for local development (port 5000).
 
 ## Documentation
 
-Full documentation link TBA.
+**Hosted:**
 
-In the meanwhile you can build your local documentation by going to `docs` folder and running:
+[NetworkToolsAPI on ReadTheDocs](http://networktoolsapi.readthedocs.io/)
+
+**Development:**
+
+Build your local documentation by going to `docs` folder and running:
 
 ```bash
 build html
