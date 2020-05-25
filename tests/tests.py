@@ -11,7 +11,7 @@ class TestNetworkToolsAPI(unittest.TestCase):
 
     def test_resolver(self):
         rv = networktools.api.hostname_resolves('example.com')
-        self.assertEqual(rv, ['93.184.216.34', '2606:2800:220:1:248:1893:25c8:1946'])
+        self.assertEqual(rv, ['93.184.216.34'])
 
     def test_geoip_public_domain(self):
         rv = self.app.get('/api/geoip/example.com', environ_base={'REMOTE_ADDR': '93.184.216.34'})
@@ -63,6 +63,10 @@ class TestNetworkToolsAPI(unittest.TestCase):
 
     def test_geoip_private_ip(self):
         rv = self.app.get('/api/geoip/192.168.0.1')
+        self.assertEqual(rv.status_code, 400)
+
+    def test_geoip_multicast_ip(self):
+        rv = self.app.get('/api/geoip/239.0.0.1')
         self.assertEqual(rv.status_code, 400)
 
     def test_geoip_garbage(self):
@@ -213,7 +217,7 @@ class TestNetworkToolsAPI(unittest.TestCase):
         self.assertIsInstance(resp['soa']['records'], list)
 
     def test_dns_public_domain_custom_invalid_querier(self):
-        rv = self.app.get('/api/dns/example.com?q=1.1.1.1')
+        rv = self.app.get('/api/dns/example.com?q=3.3.3.3')
         resp = json.loads(rv.data)
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(resp['msg'], "Request timed out")
@@ -286,7 +290,7 @@ class TestNetworkToolsAPI(unittest.TestCase):
         self.assertEqual(resp['status'], 'ok')
 
     def test_nmap_public_ip(self):
-        rv = self.app.get('/api/nmap/95.180.1.211')  # Sorry google-cache :)
+        rv = self.app.get('/api/nmap/93.184.216.34')  # Sorry google-cache :)
         resp = json.loads(rv.data)
         self.assertEqual(rv.status_code, 200)
         self.assertIn('hosts', resp)
@@ -300,7 +304,7 @@ class TestNetworkToolsAPI(unittest.TestCase):
         self.assertIsInstance(resp['hosts'], list)
 
     def test_nmap_public_ip_range(self):
-        rv = self.app.get('/api/nmap/95.180.1.211/28')
+        rv = self.app.get('/api/nmap/93.184.216.34/28')
         resp = json.loads(rv.data)
         self.assertEqual(rv.status_code, 200)
         self.assertIn('hosts', resp)
@@ -417,6 +421,7 @@ class TestNetworkToolsAPI(unittest.TestCase):
         resp = json.loads(rv.data)
         self.assertEqual(resp['status'], 'error')
         self.assertEqual(rv.status_code, 400)
+
 
 if __name__ == '__main__':
     unittest.main()

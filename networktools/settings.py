@@ -9,8 +9,8 @@ APP_STATIC = os.path.join(APP_ROOT, 'static')
 # Free databases
 # http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 # http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz
-CITY_MMDB_LOCATION = os.path.join(APP_STATIC, 'data/GeoLiteCity.dat')
-ISP_MMDB_LOCATION = os.path.join(APP_STATIC, 'data/GeoIPASNum.dat')
+CITY_MMDB_LOCATION = os.path.join(APP_STATIC, 'data/GeoLite2-City.mmdb')
+ISP_MMDB_LOCATION = os.path.join(APP_STATIC, 'data/GeoLite2-ASN.mmdb')
 
 # Paid (and more accurate) databases
 # CITY_MMDB_LOCATION = os.path.join(APP_STATIC, 'data/GeoIPCity.dat')

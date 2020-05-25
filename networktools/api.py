@@ -2,13 +2,12 @@
 Main API functionality
 """
 
-import sys
 import socket
 import logging
 import nmap
-import pygeoip
 import math
 
+import geoip2.database
 from pythonwhois import get_whois
 from pythonwhois.shared import WhoisException
 from dns import exception, resolver
@@ -35,14 +34,14 @@ logger.info(r"""
 ALLOWED_IPS = app.config['ALLOWED_IPS']
 
 try:
-    CITY_MMDB = pygeoip.GeoIP(app.config['CITY_MMDB_LOCATION'])
-    ISP_MMDB = pygeoip.GeoIP(app.config['ISP_MMDB_LOCATION'])
+    CITY_MMDB = geoip2.database.Reader(app.config['CITY_MMDB_LOCATION'])
+    ISP_MMDB = geoip2.database.Reader(app.config['ISP_MMDB_LOCATION'])
 except IOError as e:
     logger.critical("Cannot open GEOIP database: %s", str(e))
 
 limiter = Limiter(app,
                   key_func=get_remote_address,
-                  global_limits=app.config['LIMITER_GLOBAL_LIMITS'])
+                  default_limits=app.config['LIMITER_GLOBAL_LIMITS'])
 
 
 @app.before_request
@@ -103,7 +102,7 @@ def get_ipwhois(ip):
     except BlacklistError as e:
         return str(e)
 
-    ipwhois_result = ipwhois_query.lookup()
+    ipwhois_result = ipwhois_query.lookup_whois()
     return ipwhois_result
 
 
@@ -158,8 +157,8 @@ def return_whatismyip():
     error = {}
     visitor_ip = request.remote_addr
 
-    geoip = CITY_MMDB.record_by_addr(visitor_ip)
-    isp = ISP_MMDB.org_by_addr(visitor_ip)
+    geoip = CITY_MMDB.city(visitor_ip)
+    isp = ISP_MMDB.asn(visitor_ip)
 
     ipwhois_info = get_ipwhois(visitor_ip)
 
@@ -233,7 +232,11 @@ def return_geoip(query):
     resolved_ip = hostname_resolves(query)
 
     visitor_ip = request.remote_addr
-    visitor_geoip = CITY_MMDB.record_by_addr(visitor_ip)
+    try:
+        visitor_geoip = CITY_MMDB.city(visitor_ip)
+    except Exception as err:
+        logger.warning(err)
+        visitor_geoip = None
 
     args = request.args.get('imperial')
 
@@ -244,18 +247,30 @@ def return_geoip(query):
 
     for ip in resolved_ip:
         logger.debug(ip)
-        geoip = CITY_MMDB.record_by_addr(ip)
-        geoip['ip'] = ip
+        geoip_obj = CITY_MMDB.city(ip)
+        geoip = {
+            "area_code": geoip_obj.location.metro_code,
+            "city": geoip_obj.city.name,
+            "continent": geoip_obj.continent.name,
+            "country_code": geoip_obj.country.iso_code,
+            "country_name": geoip_obj.country.name,
+            "latitude": geoip_obj.location.latitude,
+            "longitude": geoip_obj.location.longitude,
+            "metro_code": geoip_obj.location.metro_code,
+            "postal_code": geoip_obj.postal.code,
+            "region_code": geoip_obj.subdivisions.most_specific.iso_code,
+            "time_zone": geoip_obj.location.time_zone,
+            "ip": ip}
 
-        isp = ISP_MMDB.org_by_addr(ip)
-        geoip['isp'] = isp
+        isp = ISP_MMDB.asn(ip)
+        geoip['isp'] = isp.autonomous_system_organization
 
-        geoip['google_maps_url'] = "http://maps.google.com/maps?q=loc:{},{}".format(geoip['latitude'],
-                                                                                    geoip['longitude'])
+        geoip['google_maps_url'] = "http://maps.google.com/maps?q=loc:{},{}".format(geoip_obj.location.latitude,
+                                                                                    geoip_obj.location.longitude)
 
         if visitor_geoip is not None:
-            distance, unit = geoip_distance(visitor_geoip['latitude'], visitor_geoip['longitude'],
-                                            geoip['latitude'], geoip['longitude'], metric=metric)
+            distance, unit = geoip_distance(visitor_geoip.location.latitude, visitor_geoip.location.longitude,
+                                            geoip_obj.location.latitude, geoip_obj.location.longitude, metric=metric)
             geoip['distance'] = distance
             geoip['distance_unit'] = unit
         else:
